@@ -12,6 +12,7 @@ export class AppComponent implements OnChanges {
   markCordsTerritory: boolean;
   markTerritory: boolean;
   title = "maps";
+
   // zoom level
   zoom: any = 20;
   lat: any = 51.678418;
