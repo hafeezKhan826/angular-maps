@@ -17,8 +17,6 @@ export class AppComponent implements OnChanges {
   zoom: any = 20;
   lat: any = 51.678418;
   lng: any = 7.809007;
-  public map: AgmPolygon;
-  polygonOptions: PolygonOptions;
   markers: Marker[] = [
     /* {
       name: "Tampa",
@@ -54,16 +52,16 @@ export class AppComponent implements OnChanges {
   constructor(private mapsWrapper: GoogleMapsAPIWrapper) {
     this.subCoordsMarkers = [];
     this.markTerritory = false;
-    this.polygonOptions = {};
-    this.configurePolygon();
-    this.mapsWrapper.createPolygon(this.polygonOptions);
-  }
-  configurePolygon() {
-    this.polygonOptions.paths = this.markers;
   }
 
   public polyClicked(event) {
-    console.log("polyClicked", event.latLng.lat());
+    console.log("Cliked inside Polygon");
+    console.log(
+      "Latitude: ",
+      event.latLng.lat(),
+      "\tLatitude: ",
+      event.latLng.lat()
+    );
   }
   public manageSelect(event) {
     this.lat = event.coords.lat;
@@ -88,7 +86,6 @@ export class AppComponent implements OnChanges {
 
   public markerDragEnd(m, $event) {
     console.log("Before Drag update: ", m);
-    // console.log("markerDragEnd: ", $event, m);
     for (let i = 0; i < this.markers.length; i++) {
       if (m.lat === this.markers[i].lat && m.lng === this.markers[i].lng) {
         const updatedAfterDrag: Marker = {
@@ -100,9 +97,6 @@ export class AppComponent implements OnChanges {
         this.markers[i] = Object.assign({}, updatedAfterDrag);
       }
     }
-    // console.log("SODFKJ: ", this.map.paths);
-    // this.configurePolygon();
-
     this.markTerritory = false;
     setTimeout(() => {
       this.markTerritory = true;

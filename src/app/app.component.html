@@ -4,13 +4,11 @@
     Welcome to {{ title }}!
   </h1>
   {{markers | json}}
-  <br>
   <div class="coord-save-button">
     <button class="btn btn-success" (click)="saveCoords()">Save Coords</button>
     <button class="btn btn-primary" (click)="removeCoords()">Remove Coords</button>
   </div>
 
-  <br>
   <div>
     <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" (mapClick)="manageSelect($event)">
       <agm-marker [latitude]="m.lat" [longitude]="m.lng" *ngFor="let m of markers, let i = index" (markerClick)="markerClicked(m,i)"
@@ -32,6 +30,7 @@
     </agm-map>
   </div>
 
+  <!-- borrowed for testing -->
   <div *ngIf="">
     {{ restaurant.longitude }} {{ restaurant.latitude }}
     <agm-map [latitude]="restaurant.latitude" [longitude]="restaurant.longitude">
