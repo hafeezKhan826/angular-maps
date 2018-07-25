@@ -1,0 +1,10 @@
+agm-map {
+  height: 850px;
+}
+
+.coord-save-button {
+  position: fixed;
+  top: 40%;
+  right: 5%;
+  z-index: 9;
+}
