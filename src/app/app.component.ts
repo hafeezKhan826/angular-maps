@@ -9,6 +9,8 @@ import { NgForm } from "@angular/forms";
   styleUrls: ["./app.component.css"]
 })
 export class AppComponent implements OnChanges {
+  circleLng: number;
+  circleLat: number;
   tempFarm: any[];
   stopCrops: boolean;
   tempMarker: any[];
@@ -287,6 +289,8 @@ export class AppComponent implements OnChanges {
     this.form = null;
     this.tempMarker = [];
     this.tempFarm = [];
+    this.circleLat = 12.9597914;
+    this.circleLng = 77.52897970000004;
   }
   public polyClicked(event) {
     const subCoords: Marker = {
