@@ -3,45 +3,99 @@
   <h1>
     Welcome to {{ title }}!
   </h1>
-  {{markers | json}}
+
+  <div *ngFor="let farm of farms;let i = index">
+    <div>
+
+    </div>
+  </div>
+
+  <hr>
+
+  <form class="form-inline" #newFarm="ngForm" (ngSubmit)="addNewFarm(newFarm)">
+    <div class="form-group">
+      <label>Farm Name:</label>
+      <input type="text" autofocus class="form-control" id="farmName" name="farmName" ngModel value="New Farm">
+    </div>
+    <div class="form-group">
+      <label>Color:</label>
+      <input type="text" class="form-control" id="color" name="color" value="Black" ngModel>
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+  </form>
+
   <div class="coord-save-button">
-    <button class="btn btn-success" (click)="saveCoords()">Save Coords</button>
-    <button class="btn btn-primary" (click)="removeCoords()">Remove Coords</button>
+    <button class="btn btn-outline-success" (click)="saveCoords()" *ngIf="generateFields">Save Coords</button>
+    <button class="btn btn-outline-primary" (click)="removeCoords()">Remove Coords</button>
+    <button class="btn btn-outline-default" (click)="stopCreatingSubCoords()" *ngIf="generateSubs">Stop Creating SubCoords</button>
   </div>
 
   <div>
-    <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" (mapClick)="manageSelect($event)">
+    <!-- <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" (mapClick)="manageSelect($event)">
       <agm-marker [latitude]="m.lat" [longitude]="m.lng" *ngFor="let m of markers, let i = index" (markerClick)="markerClicked(m,i)"
         [markerDraggable]="m.draggable" (dragEnd)='markerDragEnd(m,$event)'>
         <agm-info-window>
           {{m.name}}
-          <button class="delete-save-button" (click)="deleteMarker(m)">delete</button>
+          <button class="delete-save-button" (click)="deleteMarker(m)">Delete</button>
         </agm-info-window>
       </agm-marker>
       <div *ngIf="markTerritory">
-        <agm-polygon [paths]="markers" [strokeOpacity]="0.6" [strokeWeight]="0.1" [fillColor]="'green'" [fillOpacity]='0.6' [editable]='false'
+        <agm-polygon [paths]="markers" [strokeOpacity]="0.6" [strokeWeight]="0.1" [fillColor]="'green'" [fillOpacity]='0.6' [editable]='true'
           [geodesic]='false' (polyClick)='polyClicked($event)'>
-          <agm-polygon [paths]="subCoordsMarkers" [strokeOpacity]="0.6" [strokeWeight]="0.1" [fillColor]="'pink'" [fillOpacity]='0.6'
-            [editable]='false' [geodesic]='true'>
-          </agm-polygon>
+          <div *ngIf="displaySubCoords">
+            <agm-marker *ngFor="let im of subCoordsMarkers, let i = index" [latitude]="im.lat" [longitude]="im.lng" (markerClick)="markerClicked(im,i)"
+              [markerDraggable]="im.draggable" (dragEnd)='markerDragEnd(im,$event)'>
+              <agm-info-window>
+                {{im.name}}
+                <button class="delete-save-button" (click)="deleteMarker(im)">Delete</button>
+              </agm-info-window>
+            </agm-marker>
+            <agm-polygon [paths]="subCoordsMarkers" [strokeOpacity]="0.6" [strokeWeight]="0.1" [fillColor]="'white'" [fillOpacity]='0.6'
+              [editable]='true' [geodesic]='true'>
+            </agm-polygon>
+          </div>
         </agm-polygon>
 
       </div>
-    </agm-map>
-  </div>
+    </agm-map> -->
 
-  <!-- borrowed for testing -->
-  <div *ngIf="">
-    {{ restaurant.longitude }} {{ restaurant.latitude }}
-    <agm-map [latitude]="restaurant.latitude" [longitude]="restaurant.longitude">
-      <agm-marker [latitude]="restaurant.latitude" [longitude]="restaurant.longitude"></agm-marker>
-      <agm-polygon *ngFor="let zone of restaurant.delivery_zones" [fillColor]="red" [fillOpacity]="0.5" [strokeColor]="blue" [strokeOpacity]="0.6"
-        [strokeWeight]="2" [visible]="true" [zIndex]="1">
-        <ng-container *ngFor="let point of paths">
-          <agm-polyline-point [latitude]="point.lat" [longitude]="point.lng">
-          </agm-polyline-point>
-        </ng-container>Ï
-      </agm-polygon>
+    <!-- Working map -->
+
+
+    <agm-map [latitude]="lat" [longitude]='lng' [zoom]='zoom' (mapClick)="mapClicked($event)">
+      <div *ngFor="let farm of farms;let i = index">
+        <agm-marker [latitude]="marker.lat" [longitude]='marker.lng' *ngFor="let marker of farm.markers;let mi = index " [markerDraggable]="marker.draggable"
+          (dragEnd)="updateDragPoints(marker,$event)" (markerClick)="markerClicked(marker, mi)">
+          <agm-info-window>
+            {{ marker.name }}
+            <button class="delete-save-button" (click)="deleteFarmMarker(marker, 'farm', i, mi)">Delete</button>
+          </agm-info-window>
+        </agm-marker>
+        <div *ngIf="renderPolygon">
+
+          <agm-polygon [paths]="farm.markers" [strokeOpacity]="0.6" [strokeWeight]="0.1" [fillColor]="farm.fillColor" [fillOpacity]='0.4'
+            (polyClick)='polygonClicked($event, i, mi)'>
+
+            <div *ngFor="let crop of farm.crops;let ci = index">
+              <agm-marker [latitude]="cmarker?.lat" [longitude]='cmarker?.lng' *ngFor="let cmarker of crop?.markers; let ci = index" [markerDraggable]="cmarker?.draggable"
+                (dragEnd)="updateDragPoints(cmarker,$event)">
+                <agm-info-window>
+                  {{ cmarker.name }}
+                  <button class="delete-save-button" (click)="deleteFarmMarker(cmarker, 'crop', i , ci)">Delete</button>
+                </agm-info-window>
+                <agm-polygon [paths]="crop.markers" [strokeOpacity]="0.6" [strokeWeight]="0.1" [fillColor]="crop?.fillColor" [fillOpacity]='0.4'>
+                </agm-polygon>
+              </agm-marker>
+            </div>
+          </agm-polygon>
+        </div>
+      </div>
+
     </agm-map>
+
   </div>
+  <hr>
+
+  <pre>{{closeResult}}</pre>
+  <!-- borrowed for testing -->
 </div>

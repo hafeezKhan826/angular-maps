@@ -1,8 +1,9 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
-import { AgmCoreModule, GoogleMapsAPIWrapper } from "@agm/core";
+import { AgmCoreModule } from "@agm/core";
 import { AgmSnazzyInfoWindowModule } from "@agm/snazzy-info-window";
 import { AppComponent } from "./app.component";
+import { FormsModule } from "@angular/forms";
 
 @NgModule({
   declarations: [AppComponent],
@@ -11,9 +12,10 @@ import { AppComponent } from "./app.component";
     AgmCoreModule.forRoot({
       apiKey: "AIzaSyDK4NvjsQQr6q_KCybHtHH1yuy7G4furL0"
     }),
-    AgmSnazzyInfoWindowModule
+    AgmSnazzyInfoWindowModule,
+    FormsModule
   ],
-  providers: [GoogleMapsAPIWrapper],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
